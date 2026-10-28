@@ -1,0 +1,25 @@
+# Synthetic risky RBAC manifests. Not for kubectl apply.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: intentionally-broad-demo
+rules:
+  - apiGroups: [""]
+    resources: ["secrets", "pods"]
+    verbs: ["*", "list", "create"]
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["clusterroles"]
+    verbs: ["bind", "escalate"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: intentionally-risky-demo
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: demo
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
